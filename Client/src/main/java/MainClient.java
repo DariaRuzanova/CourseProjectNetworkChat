@@ -1,11 +1,15 @@
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class MainClient {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileClient.txt";
-        ConsoleLogger logger = new ConsoleLogger(logFileName, true);
+//        String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileClient.txt";
+        String logFileName = loggerClientFileName();
+        ConsoleLogger logger = new ConsoleLogger(logFileName, false);
 
         ConsoleMessageProvider messageProvider = new ConsoleMessageProvider(sc);
 
@@ -19,5 +23,9 @@ public class MainClient {
         logger.log("Пользователь " + name + " авторизовался в чате");
         client.write();
         client.read();
+    }
+
+    private static String loggerClientFileName() {
+        return String.valueOf(Paths.get(Path.of(new File("").getAbsolutePath()).toString(), "logFileClient.txt"));
     }
 }

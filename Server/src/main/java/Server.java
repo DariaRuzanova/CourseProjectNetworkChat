@@ -1,13 +1,21 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server {
-    String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileServer.txt";
+    //    String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileServer.txt";
+    String logFileName = loggerServerFileName();
+
+    private String loggerServerFileName() {
+        return String.valueOf(Paths.get(Path.of(new File("").getAbsolutePath()).toString(), "logFileServer.txt"));
+    }
+
     private final ConsoleLogger logger = new ConsoleLogger(logFileName, false);
     private static Socket clientSocket;
     private final String EXIT = "/exit";
