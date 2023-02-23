@@ -1,31 +1,24 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server {
-    //    String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileServer.txt";
-    String logFileName = loggerServerFileName();
-
-    private String loggerServerFileName() {
-        return String.valueOf(Paths.get(Path.of(new File("").getAbsolutePath()).toString(), "logFileServer.txt"));
-    }
-
-    private final ConsoleLogger logger = new ConsoleLogger(logFileName, false);
+    private final int port;
+    private final ConsoleLogger logger;
     private static Socket clientSocket;
-    private final String EXIT = "/exit";
-
     private static BufferedReader in;
     private static BufferedWriter out;
-    ServerSettings serverSettings = new ServerSettings();
-    int port = serverSettings.getPort();
-    LinkedBlockingQueue<ClientMessage> clientMessages = new LinkedBlockingQueue<>();
     ArrayList<ClientInfo> clients = new ArrayList<>();
+    LinkedBlockingQueue<ClientMessage> clientMessages = new LinkedBlockingQueue<>();
+
+    public Server(String settingsFileName, String logFileName) {
+        ServerSettings serverSettings = new ServerSettings(settingsFileName);
+        port = serverSettings.getPort();
+        logger = new ConsoleLogger(logFileName, false);
+    }
 
     public void connectServer() {
         Thread thread = new Thread(() -> {
@@ -92,7 +85,7 @@ public class Server {
                 boolean exit = false;
                 while (!exit) {
                     String msg = clientInfo.getIn().readLine();
-                    if (!Objects.equals(msg, EXIT)) {
+                    if (!Objects.equals(msg, CommonConstants.EXIT_MESSAGE)) {
                         logger.log("Получено сообщение от пользователя " + clientInfo.getName() + ": " + msg);
                         System.out.println("Получено сообщение от пользователя " + clientInfo.getName() + ": " + msg);
                     } else {

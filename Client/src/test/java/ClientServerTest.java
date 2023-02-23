@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,24 +8,29 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClientServerTest {
     @Test
     void test() throws InterruptedException {
-        Server server = new Server();
+        String pathFolder = String.valueOf(Paths.get(CommonUtils.getRouteFolder()).getParent());
+        String settingsFileName = String.valueOf(Paths.get(pathFolder, "Settings.txt"));
+
+        String logFileName = String.valueOf(Paths.get(pathFolder, "logFileServer.txt"));
+        Server server = new Server(settingsFileName, logFileName);
         server.connectServer();
         server.sendAllMessages();
 
         String clientName1 = "client1";
-        String logFileName1 = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileClient1.txt";
-        ConsoleLogger logger1 = new ConsoleLogger(logFileName1, true);
+
+        String logFileName1 = String.valueOf(Paths.get(pathFolder, "logFileClient1.txt"));
+        ConsoleLogger logger1 = new ConsoleLogger(logFileName1, false);
         TestMessageProvider messageProvider1 = new TestMessageProvider();
-        Client client1 = new Client(clientName1, logger1, messageProvider1);
+        Client client1 = new Client(clientName1, settingsFileName, logger1, messageProvider1);
         client1.connect();
         client1.write();
         client1.read();
 
         String clientName2 = "client2";
-        String logFileName2 = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileClient2.txt";
-        ConsoleLogger logger2 = new ConsoleLogger(logFileName2, true);
+        String logFileName2 = String.valueOf(Paths.get(pathFolder, "logFileClient2.txt"));
+        ConsoleLogger logger2 = new ConsoleLogger(logFileName2, false);
         TestMessageProvider messageProvider2 = new TestMessageProvider();
-        Client client2 = new Client(clientName2, logger2, messageProvider2);
+        Client client2 = new Client(clientName2, settingsFileName, logger2, messageProvider2);
         client2.connect();
         client2.write();
         client2.read();

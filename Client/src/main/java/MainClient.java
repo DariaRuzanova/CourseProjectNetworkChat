@@ -7,8 +7,9 @@ public class MainClient {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-//        String logFileName = "d:\\Daria\\Java\\networkChat\\networkChat\\logFileClient.txt";
-        String logFileName = loggerClientFileName();
+        String settingsFileName = CommonUtils.getRouteFileName("Settings.txt");
+        String logFileName = CommonUtils.getRouteFileName("logFileClient.txt");
+
         ConsoleLogger logger = new ConsoleLogger(logFileName, false);
 
         ConsoleMessageProvider messageProvider = new ConsoleMessageProvider(sc);
@@ -16,7 +17,7 @@ public class MainClient {
         System.out.println("Введите имя для авторизации");
         String name = sc.nextLine();
 
-        Client client = new Client(name, logger, messageProvider);
+        Client client = new Client(name, settingsFileName, logger, messageProvider);
         client.connect();
 
         System.out.println("Пользователь " + name + " авторизовался в чате");
@@ -25,7 +26,4 @@ public class MainClient {
         client.read();
     }
 
-    private static String loggerClientFileName() {
-        return String.valueOf(Paths.get(Path.of(new File("").getAbsolutePath()).toString(), "logFileClient.txt"));
-    }
 }

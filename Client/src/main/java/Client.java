@@ -3,27 +3,27 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client {
-    private final String EXIT = "/exit";
-
     private Socket socket;
     private BufferedReader in;
     private BufferedWriter out;
 
-    ServerSettings serverSettings = new ServerSettings();
-    int port = serverSettings.getPort();
-    String host = serverSettings.getHost();
+    private final int port;
+    private final String host;
     private final String name;
     ConsoleLogger logger;
     private final MessageProvider messageProvider;
     private final AtomicBoolean exit = new AtomicBoolean(false);
 
-    public Client(String name, ConsoleLogger logger, MessageProvider messageProvider) {
+    public Client(String name, String settingsFileName, ConsoleLogger logger, MessageProvider messageProvider) {
         this.name = name;
         this.logger = logger;
         this.messageProvider = messageProvider;
+        ServerSettings serverSettings = new ServerSettings(settingsFileName);
+        port = serverSettings.getPort();
+        host = serverSettings.getHost();
     }
 
-    public boolean connect() {
+    public void connect() {
         socket = null;
         try {
             socket = new Socket(host, port);
@@ -36,7 +36,6 @@ public class Client {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return socket != null;
     }
 
     public void disconnect() {
@@ -77,7 +76,7 @@ public class Client {
                     logger.log("Пользователь " + name + ": " + msg);
                     out.write(msg);
                     out.newLine();
-                    exit.set(EXIT.equals(msg));
+                    exit.set(CommonConstants.EXIT_MESSAGE.equals(msg));
                     out.flush();
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
